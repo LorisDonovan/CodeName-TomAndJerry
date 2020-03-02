@@ -6,13 +6,13 @@ env = gym.make("MountainCar-v0")
 
 LEARNING_RATE = 0.1
 DISCOUNT = 0.95
-EPISODES = 25000
+EPISODES = 5000
 
 SHOW_EVERY = 1000
 STATS_EVERY = 200
 
-#start_qtable = f"C:\_My Files\Python\QLearningTest\QLearningTest\q_tables saved\q_tables Completed (1)\{24990}-qtable.npy"
-start_qtable = None
+start_qtable = f"C:\_My Files\Python\QLearningTest\QLearningTest\q_tables saved\q_tables Completed (1)\{24990}-qtable.npy"
+#start_qtable = None
 
 DISCRETE_OS_SIZE = [40] * len(env.observation_space.high)	#separating the OS into 40 chunks
 discrete_os_win_size = (env.observation_space.high - env.observation_space.low) / DISCRETE_OS_SIZE
