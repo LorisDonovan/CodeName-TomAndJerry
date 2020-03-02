@@ -1,4 +1,3 @@
-from mpl_toolkits.mplot3d import axes3d
 import matplotlib.pyplot as plt
 from matplotlib import style
 import numpy as np
@@ -15,7 +14,7 @@ def get_q_color(value, vals):
 
 fig = plt.figure(figsize=(12, 9))
 
-for i in range(24990, 25000, 10):
+for i in range(0, 25000, 10):
 	#print(i)
 	ax1 = fig.add_subplot(311)
 	ax2 = fig.add_subplot(312)
