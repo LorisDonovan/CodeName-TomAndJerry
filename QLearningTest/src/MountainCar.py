@@ -11,7 +11,7 @@ EPISODES = 25000
 SHOW_EVERY = 1000
 STATS_EVERY = 200
 
-#start_qtable = f"C:\_My Files\Python\QLearningTest\QLearningTest\q_tables saved\q_tables Completed (1)\{245990}-qtable.npy"
+#start_qtable = f"C:\_My Files\Python\QLearningTest\QLearningTest\q_tables saved\q_tables Completed (1)\{24990}-qtable.npy"
 start_qtable = None
 
 DISCRETE_OS_SIZE = [40] * len(env.observation_space.high)	#separating the OS into 40 chunks
@@ -23,9 +23,9 @@ if start_qtable is None:
 else:
 	epsilon = 0.01
 
-START_EPSILON_DECAYING = 1
-END_EPSILON_DECAYING = EPISODES // 2
-epsilon_decay_value = epsilon / (END_EPSILON_DECAYING - START_EPSILON_DECAYING)
+max_epsilon = 1
+min_epsilon = 0.01
+exploration_decay_rate = 0.001
 
 if start_qtable is None:
 	q_table = np.random.uniform(low = -2, high = 0, size = (DISCRETE_OS_SIZE + [env.action_space.n]))	# 40x40x3 table
@@ -51,17 +51,20 @@ for episode in range(EPISODES):
 	discrete_state = get_discrete_state(env.reset())
 	done = False
 	while not done:
+		# Exploration-exploitation:
 		if np.random.random() > epsilon:
 			action = np.argmax(q_table[discrete_state])
 		else:
 			action = np.random.randint(0, env.action_space.n)
-			
+		
+		# Take new action:
 		new_state, reward, done, _ = env.step(action)	#returns continuous states, need to be converted into discrete
 		episode_reward += reward
 		new_discrete_state = get_discrete_state(new_state)
 		if render:
 			env.render()
 		
+		 # Update Q-table:
 		if not done:
 			max_future_q = np.max(q_table[new_discrete_state])
 			current_q = q_table[discrete_state + (action, )]
@@ -72,15 +75,16 @@ for episode in range(EPISODES):
 			print(f"Made it in episode: {episode}")
 			q_table[discrete_state + (action, )] = 0
 
+		# Set new state:
 		discrete_state = new_discrete_state
 
-	if END_EPSILON_DECAYING >= episode >= START_EPSILON_DECAYING:
-		epsilon -= epsilon_decay_value
+	# Exploration rate decay
+	epsilon = min_epsilon + (max_epsilon - min_epsilon) * np.exp(-exploration_decay_rate*episode)
 
 	ep_rewards.append(episode_reward)
 
-	# if episode % 10 == 0:
-	# 	np.save(f"C:\_My Files\Python\QLearningTest\QLearningTest\qtables\{episode}-qtable.npy", q_table)
+	if episode % 10 == 0:
+		np.save(f"C:\_My Files\Python\QLearningTest\QLearningTest\qtables\{episode}-qtable.npy", q_table)
 
 	if not episode % STATS_EVERY:
 		average_reward = sum(ep_rewards[-STATS_EVERY:])/len(ep_rewards[-STATS_EVERY:])
