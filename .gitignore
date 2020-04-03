@@ -4,3 +4,9 @@
 **.vcxproj
 **.vcxproj.filters
 **.vcxproj.user
+
+
+*.png
+*.npy
+*.pt
+*.mp4

@@ -11,8 +11,8 @@ EPISODES = 5000
 SHOW_EVERY = 1000
 STATS_EVERY = 200
 
-start_qtable = f"C:\_My Files\Python\QLearningTest\QLearningTest\q_tables saved\q_tables Completed (1)\{24990}-qtable.npy"
-#start_qtable = None
+#start_qtable = f"C:\_My Files\Python\QLearningTest\QLearningTest\q_tables saved\q_tables Completed (1)\{24990}-qtable.npy"
+start_qtable = None
 
 DISCRETE_OS_SIZE = [40] * len(env.observation_space.high)	#separating the OS into 40 chunks
 discrete_os_win_size = (env.observation_space.high - env.observation_space.low) / DISCRETE_OS_SIZE
@@ -21,7 +21,7 @@ discrete_os_win_size = (env.observation_space.high - env.observation_space.low) 
 if start_qtable is None:
 	epsilon = 1
 else:
-	epsilon = 0.01
+	epsilon = 0.001
 
 max_epsilon = 1
 min_epsilon = 0.01
@@ -38,7 +38,6 @@ aggr_ep_rewards = {'ep' : [], 'avg': [], 'min':[], 'max': []}
 def get_discrete_state(state):
 	discrete_state = (state - env.observation_space.low) / discrete_os_win_size
 	return tuple(discrete_state.astype(np.int))
-
 
 for episode in range(EPISODES):
 	episode_reward = 0
@@ -79,7 +78,8 @@ for episode in range(EPISODES):
 		discrete_state = new_discrete_state
 
 	# Exploration rate decay
-	epsilon = min_epsilon + (max_epsilon - min_epsilon) * np.exp(-exploration_decay_rate*episode)
+	if epsilon > 0.01:
+		epsilon = min_epsilon + (max_epsilon - min_epsilon) * np.exp(-exploration_decay_rate*episode)
 
 	ep_rewards.append(episode_reward)
 
